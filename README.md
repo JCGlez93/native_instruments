@@ -1,81 +1,92 @@
-# GitHub Native Instruments - dbt Project
+# Native Instruments - dbt Data Pipeline
 
-This project uses dbt Core with BigQuery for data analysis.
+Professional dbt project with BigQuery integration and CI/CD automation.
 
-## Setup
+## 🚀 Project Overview
+
+This project implements a complete **end-to-end data pipeline** using:
+- ✅ **dbt Core** with BigQuery
+- ✅ **Professional data architecture** (staging → core → marts)
+- ✅ **CI/CD with GitHub Actions**
+- ✅ **Comprehensive testing & documentation**
+
+## 📊 Architecture
+
+```
+📁 Data Layers
+├── 🌱 Seeds (CSV test data)
+├── 🔧 Staging (data cleaning)
+├── 🏗️ Core (dimensions & facts)  
+└── 📈 Marts (business ready)
+```
+
+### BigQuery Structure
+```
+Development:     bqni-466316.DEV_staging.*
+                bqni-466316.DEV_core.*
+                bqni-466316.DEV_marts.*
+
+Production:      bqni-466316.dbt_staging.*
+                bqni-466316.dbt_core.*
+                bqni-466316.dbt_marts.*
+```
+
+## 🛠️ Setup
 
 ### Prerequisites
-- Python 3.7+
-- dbt-bigquery
-- BigQuery credentials
+- Python 3.11+
+- BigQuery project with credentials
+- GitHub account (for CI/CD)
 
-### Installation
+### Quick Start
 
-1. Create and activate a virtual environment:
+1. **Clone and setup:**
 ```bash
-# Create virtual environment
-python3 -m venv dbt_env
-
-# Activate virtual environment
-# On macOS/Linux:
+git clone https://github.com/JCGlez93/native_instruments.git
+cd native_instruments
 source dbt_env/bin/activate
-# On Windows:
-# dbt_env\Scripts\activate
 ```
 
-2. Install dbt-bigquery:
+2. **Load environment:**
 ```bash
-pip install dbt-bigquery
+source load_env.sh
 ```
 
-3. Credentials are already configured using environment variables:
-   - The `.env` file contains all necessary configurations
-   - The JSON credentials file is already in the project
-   - Variables are loaded automatically from `profiles.yml`
-
-4. Load environment variables before using dbt:
+3. **Run pipeline:**
 ```bash
-# Option 1: Use the included script
-source ./load_env.sh
-
-# Option 2: Load manually
-source .env
-export $(grep -v '^#' .env | xargs)
+dbt seed      # Load test data
+dbt run       # Execute models
+dbt test      # Validate data
+dbt docs generate && dbt docs serve  # View docs
 ```
 
-### Basic Commands
+## 🚀 CI/CD Pipeline
 
-```bash
-# ALWAYS load environment variables first
-source ./load_env.sh
+Automated workflows with GitHub Actions:
+- **Pull Requests**: Automated testing
+- **Main branch**: Production deployment
+- **Multiple environments**: dev, CI, prod
 
-# Verify connection
-dbt debug
+See `CI_CD_SETUP.md` for detailed configuration.
 
-# Install dependencies
-dbt deps
-
-# Run models
-dbt run
-
-# Run tests
-dbt test
-
-# Generate documentation
-dbt docs generate
-dbt docs serve
-
-# Complete workflow
-dbt run && dbt test && dbt docs generate
-```
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-├── models/          # SQL models
-├── analyses/        # Ad-hoc analyses
-├── tests/          # Custom tests
-├── seeds/          # Seed data
-├── macros/         # Reusable macros
-└── snapshots/      # SCD snapshots
-``` 
+├── models/
+│   ├── staging/     # Data cleaning & standardization
+│   ├── core/        # Dimensions & fact tables
+│   └── marts/       # Business-ready analytics
+├── seeds/           # Test data (CSV files)
+├── macros/          # Custom dbt macros  
+├── tests/           # Data quality tests
+└── .github/workflows/  # CI/CD automation
+```
+
+## 🎯 Key Features
+
+- ✅ **End-to-end tested** pipeline
+- ✅ **Professional naming** conventions
+- ✅ **Comprehensive documentation** 
+- ✅ **Multi-environment** setup
+- ✅ **Automated deployments**
+- ✅ **Industry best practices**
