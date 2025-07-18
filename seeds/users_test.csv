@@ -1,0 +1,11 @@
+user_id,email,first_name,last_name,signup_date,country,age,subscription_type
+1,alice@example.com,Alice,Johnson,2023-01-15,USA,28,premium
+2,bob@test.com,Bob,Smith,2023-02-20,Canada,34,basic
+3,charlie@demo.org,Charlie,Brown,2023-03-10,UK,25,premium
+4,diana@sample.net,Diana,Wilson,2023-04-05,Germany,31,basic
+5,eve@placeholder.com,Eve,Davis,2023-05-12,France,29,premium
+6,frank@example.org,Frank,Miller,2023-06-18,Spain,27,free
+7,grace@test.net,Grace,Taylor,2023-07-22,Italy,33,basic
+8,henry@demo.com,Henry,Anderson,2023-08-14,Netherlands,30,premium
+9,iris@sample.org,Iris,Thomas,2023-09-25,Belgium,26,basic
+10,jack@placeholder.net,Jack,Jackson,2023-10-30,Portugal,35,free 

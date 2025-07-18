@@ -1,0 +1,86 @@
+version: 2
+
+models:
+  - name: stg_users_test
+    description: |
+      Staging model for user data from the test seed.
+      
+      This model performs basic cleaning and standardization of user data:
+      - Standardizes date formats
+      - Creates calculated fields like full_name
+      - Adds metadata timestamps
+      
+      **Source:** users_test seed
+      **Grain:** One row per user
+    columns:
+      - name: user_id
+        description: "Unique identifier for each user"
+        tests:
+          - unique
+          - not_null
+            
+      - name: email
+        description: "User's email address - primary contact method"
+            
+      - name: first_name
+        description: "User's first name"
+          
+      - name: last_name
+        description: "User's last name"
+          
+      - name: signup_date
+        description: "Date when the user signed up for the service"
+            
+      - name: country
+        description: "Country where the user is located"
+            
+      - name: age
+        description: "User's age in years"
+            
+      - name: subscription_type
+        description: "Type of subscription: free, basic, or premium"
+            
+      - name: full_name
+        description: "Calculated field: first_name + last_name"
+            
+      - name: dbt_updated_at
+        description: "Timestamp when this record was last processed by dbt"
+
+  - name: stg_events_test
+    description: |
+      Staging model for user events from the test seed.
+      
+      This model performs basic cleaning and standardization of event data:
+      - Standardizes timestamp formats
+      - Converts to proper date types
+      - Adds metadata timestamps
+      
+      **Source:** events_test seed
+      **Grain:** One row per event
+    columns:
+      - name: event_id
+        description: "Unique identifier for each event"
+        tests:
+          - unique
+          - not_null
+            
+      - name: user_id
+        description: "Foreign key to users - who performed this event"
+            
+      - name: event_type
+        description: "Type of event performed by the user"
+            
+      - name: event_timestamp
+        description: "Exact timestamp when the event occurred"
+            
+      - name: page_url
+        description: "URL of the page where the event occurred"
+            
+      - name: device_type
+        description: "Type of device used: desktop, mobile, or tablet"
+            
+      - name: event_date
+        description: "Date portion of event_timestamp (derived field)"
+            
+      - name: dbt_updated_at
+        description: "Timestamp when this record was last processed by dbt"

@@ -1,0 +1,103 @@
+name: DBT CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  DBT_PROFILES_DIR: ${{ github.workspace }}
+  DBT_BIGQUERY_PROJECT_ID: ${{ secrets.DBT_BIGQUERY_PROJECT_ID }}
+  DBT_BIGQUERY_LOCATION: ${{ secrets.DBT_BIGQUERY_LOCATION }}
+
+jobs:
+  dbt-test:
+    name: Test dbt models
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dbt
+      run: |
+        pip install dbt-bigquery==1.10.0
+        pip install dbt-core==1.10.4
+        
+    - name: Setup BigQuery credentials
+      run: |
+        echo '${{ secrets.DBT_BIGQUERY_KEYFILE }}' > ./credentials/keyfile.json
+        
+    - name: Set environment variables
+      run: |
+        echo "DBT_BIGQUERY_KEYFILE_PATH=./credentials/keyfile.json" >> $GITHUB_ENV
+        echo "DBT_BIGQUERY_DATASET_DEV=dbt_ci_staging" >> $GITHUB_ENV
+        echo "DBT_BIGQUERY_DATASET_PROD=dbt_ci_prod" >> $GITHUB_ENV
+        
+    - name: Install dbt dependencies
+      run: dbt deps
+      
+    - name: Load seeds
+      run: dbt seed --target dev
+      
+    - name: Test dbt models
+      run: |
+        dbt compile --target dev
+        dbt run --target dev
+        dbt test --target dev
+        
+    - name: Generate docs
+      run: dbt docs generate --target dev
+
+  dbt-deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: []
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dbt
+      run: |
+        pip install dbt-bigquery==1.10.0
+        pip install dbt-core==1.10.4
+        
+    - name: Setup BigQuery credentials
+      run: |
+        echo '${{ secrets.DBT_BIGQUERY_KEYFILE }}' > ./credentials/keyfile.json
+        
+    - name: Set environment variables
+      run: |
+        echo "DBT_BIGQUERY_KEYFILE_PATH=./credentials/keyfile.json" >> $GITHUB_ENV
+        echo "DBT_BIGQUERY_DATASET_DEV=dbt_staging" >> $GITHUB_ENV
+        echo "DBT_BIGQUERY_DATASET_PROD=dbt_prod" >> $GITHUB_ENV
+        
+    - name: Install dbt dependencies
+      run: dbt deps
+      
+    - name: Load seeds to production
+      run: dbt seed --target prod
+      
+    - name: Deploy to production
+      run: |
+        dbt run --target prod
+        dbt test --target prod
+        
+    - name: Generate and deploy docs
+      run: |
+        dbt docs generate --target prod
+        # Aquí puedes agregar deploy de docs a S3, GCS, etc. 

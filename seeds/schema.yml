@@ -1,0 +1,70 @@
+version: 2
+
+seeds:
+  - name: users_test
+    description: "Test data for users"
+    columns:
+      - name: user_id
+        description: "Unique user identifier"
+        tests:
+          - unique
+          - not_null
+      - name: email
+        description: "User email address"
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: "User first name"
+        tests:
+          - not_null
+      - name: last_name
+        description: "User last name"
+        tests:
+          - not_null
+      - name: signup_date
+        description: "Date when user signed up"
+        tests:
+          - not_null
+      - name: country
+        description: "User country"
+      - name: age
+        description: "User age"
+        tests:
+          - not_null
+      - name: subscription_type
+        description: "Type of subscription"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['free', 'basic', 'premium']
+
+  - name: events_test
+    description: "Test data for user events"
+    columns:
+      - name: event_id
+        description: "Unique event identifier"
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: "User who performed the event"
+        tests:
+          - not_null
+      - name: event_type
+        description: "Type of event"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['login', 'logout', 'page_view', 'purchase', 'signup']
+      - name: event_timestamp
+        description: "When the event occurred"
+        tests:
+          - not_null
+      - name: page_url
+        description: "URL of the page"
+      - name: device_type
+        description: "Type of device used"
+        tests:
+          - accepted_values:
+              values: ['desktop', 'mobile', 'tablet'] 
