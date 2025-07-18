@@ -1,0 +1,47 @@
+name: 'github_native_instruments'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'github_native_instruments'
+
+# These configurations specify where dbt should look for different types of files.
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+models:
+  github_native_instruments:
+    # Staging models 
+    staging:
+      +materialized: view
+      +schema: staging
+      +docs:
+        node_color: "#8FBC8F"
+    # Core models
+    core:
+      +materialized: table
+      +schema: core  
+      +docs:
+        node_color: "#4682B4"
+    # Marts models
+    marts:
+      +materialized: table
+      +schema: marts
+      +docs:
+        node_color: "#FF6B6B"
+
+# Test configurations
+tests:
+  +store_failures: true
+  +schema: dbt_test_failures
+

@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: dim_users_test
+    description: |
+      User dimension table for analytics.
+      
+      This table contains enriched user information with activity metrics:
+      - Core user attributes from staging
+      - Aggregated activity metrics from events
+      - Business logic for user classification
+      
+      **Business Logic:**
+      - total_events: Count of all events per user
+      - Materialized as table for performance
+      
+      **Sources:** 
+      - stg_users_test
+      - stg_events_test
+      
+      **Grain:** One row per user
+      **Type:** Slowly Changing Dimension (SCD Type 1)
+    columns:
+      - name: user_id
+        description: "Primary key - unique identifier for each user"
+        tests:
+          - unique
+          - not_null
+            
+      - name: full_name
+        description: "User's complete name (first + last)"
+            
+      - name: email
+        description: "User's email address"
+            
+      - name: subscription_type
+        description: "Current subscription level"
+            
+      - name: country
+        description: "User's country of residence"
+            
+      - name: age
+        description: "User's age in years"
+            
+      - name: total_events
+        description: "Total number of events performed by this user"
+            
+      - name: dbt_updated_at
+        description: "Timestamp when this record was last processed by dbt"
+
+  - name: fct_events_test
+    description: |
+      Event fact table for user activity analysis.
+      
+      This table contains all user events with dimensional context:
+      - Event details from staging
+      - User context from dimension table
+      - Optimized for analytical queries
+      
+      **Business Rules:**
+      - Events are immutable once recorded
+      - Each event links to exactly one user
+      - Events must have valid timestamps
+      
+      **Sources:**
+      - stg_events_test
+      - dim_users_test
+      
+      **Grain:** One row per event
+      **Type:** Fact table (transactional)
+    columns:
+      - name: event_id
+        description: "Primary key - unique identifier for each event"
+        tests:
+          - unique
+          - not_null
+            
+      - name: user_id
+        description: "Foreign key to dim_users_test"
+            
+      - name: event_type
+        description: "Type of event performed"
+            
+      - name: event_timestamp
+        description: "Exact timestamp when event occurred (UTC)"
+            
+      - name: event_date
+        description: "Date portion of event_timestamp for partitioning"
+            
+      - name: page_url
+        description: "URL where the event occurred"
+            
+      - name: device_type
+        description: "Device used for the event"
+            
+      - name: subscription_type
+        description: "User's subscription type at time of event (denormalized)"
+            
+      - name: dbt_updated_at
+        description: "Timestamp when this record was last processed by dbt"

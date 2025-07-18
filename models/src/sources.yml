@@ -1,0 +1,24 @@
+# COMMENTED OUT - These sources don't exist in our test environment
+# This file was created as an example of how to define external data sources
+# For our end-to-end test, we're using seeds instead
+
+# version: 2
+#
+# sources:
+#   - name: raw_data
+#     description: "Raw data from various sources"
+#     database: "{{ env_var('DBT_BIGQUERY_PROJECT_ID') }}"
+#     schema: raw_data
+#     tables:
+#       - name: users
+#         description: "Raw user data"
+#       - name: events
+#         description: "User events and interactions"
+#
+#   - name: external_apis
+#     description: "Data from external APIs" 
+#     database: "{{ env_var('DBT_BIGQUERY_PROJECT_ID') }}"
+#     schema: external_data
+#     tables:
+#       - name: github_repositories
+#         description: "GitHub repository data" 

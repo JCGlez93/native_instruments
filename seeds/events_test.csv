@@ -1,0 +1,21 @@
+event_id,user_id,event_type,event_timestamp,page_url,device_type
+1,1,login,2023-01-16 09:30:00,/dashboard,desktop
+2,1,page_view,2023-01-16 09:31:15,/profile,desktop
+3,2,login,2023-02-21 14:20:00,/dashboard,mobile
+4,2,purchase,2023-02-21 14:35:00,/checkout,mobile
+5,3,login,2023-03-11 11:45:00,/dashboard,tablet
+6,3,page_view,2023-03-11 11:50:00,/settings,tablet
+7,1,logout,2023-01-16 10:15:00,/dashboard,desktop
+8,4,login,2023-04-06 16:10:00,/dashboard,desktop
+9,4,page_view,2023-04-06 16:12:00,/analytics,desktop
+10,5,login,2023-05-13 08:25:00,/dashboard,mobile
+11,5,purchase,2023-05-13 08:40:00,/checkout,mobile
+12,6,signup,2023-06-19 12:30:00,/register,desktop
+13,6,login,2023-06-19 12:35:00,/dashboard,desktop
+14,7,login,2023-07-23 15:45:00,/dashboard,mobile
+15,8,login,2023-08-15 10:20:00,/dashboard,tablet
+16,8,page_view,2023-08-15 10:25:00,/reports,tablet
+17,9,login,2023-09-26 13:15:00,/dashboard,desktop
+18,10,login,2023-10-31 09:10:00,/dashboard,mobile
+19,1,page_view,2023-01-17 14:30:00,/analytics,desktop
+20,2,page_view,2023-02-22 11:20:00,/reports,mobile 

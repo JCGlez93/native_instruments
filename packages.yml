@@ -1,0 +1,28 @@
+packages:
+  # dbt-utils: Essential utilities for dbt projects
+  # Provides macros for data testing, SQL helpers, and more
+  - package: dbt-labs/dbt_utils
+    version: "1.3.0"
+  
+  # dbt-expectations: Data quality testing framework
+  # Advanced tests for data validation beyond basic dbt tests
+  - package: calogica/dbt_expectations
+    version: "0.10.3"
+  
+  # codegen: Code generation helpers
+  # Automatically generate schema.yml files, staging models, etc.
+  - package: dbt-labs/codegen
+    version: "0.12.1"
+  
+  # audit-helper: Compare datasets between environments
+  # Useful for validating migrations and model changes
+  - package: dbt-labs/audit_helper
+    version: "0.9.0"
+  
+  # metrics: dbt metrics framework (if using dbt metrics)
+  # - package: dbt-labs/metrics
+  #   version: "1.6.0"
+  
+  # re_data: Data reliability and monitoring
+  # - package: re-data/re_data
+  #   version: "1.5.0" 

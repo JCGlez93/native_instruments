@@ -1,0 +1,29 @@
+target/
+dbt_packages/
+logs/
+.env
+.DS_Store
+*.pyc
+__pycache__/
+
+# Credentials
+profiles.yml
+credentials/
+*.json
+!dbt_project.yml
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# CI/CD generated files
+keyfile.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db 
