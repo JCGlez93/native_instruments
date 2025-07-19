@@ -26,6 +26,8 @@ keyfile.json
 
 # OS
 .DS_Store
-Thumbs.db dbt_env/
+Thumbs.db
 
+# Python virtual environment
 dbt_env/
+
