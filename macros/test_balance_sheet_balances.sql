@@ -1,4 +1,4 @@
-{% macro test_balance_sheet_balances(model) %}
+{% test test_balance_sheet_balances(model) %}
 
 -- Custom test macro to ensure balance sheet balances
 -- Assets should equal Liabilities + Equity for each period
@@ -28,7 +28,7 @@ balance_failures AS (
     WHERE ABS(balance_difference) > 0.01  -- Allow for small rounding differences
 )
 
-SELECT COUNT(*) AS failing_periods
+SELECT *
 FROM balance_failures
 
-{% endmacro %} 
+{% endtest %} 

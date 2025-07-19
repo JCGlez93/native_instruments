@@ -4,7 +4,7 @@ models:
   - name: mart_balance_sheet
     description: "Balance sheet aggregations by account and period"
     tests:
-      - test_balance_sheet_balances  # Custom macro to test Assets = Liabilities + Equity
+      - test_balance_sheet_balances
     columns:
       - name: account_code
         description: "Account code from chart of accounts"
