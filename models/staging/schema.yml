@@ -1,86 +1,78 @@
 version: 2
 
 models:
-  - name: stg_users_test
-    description: |
-      Staging model for user data from the test seed.
-      
-      This model performs basic cleaning and standardization of user data:
-      - Standardizes date formats
-      - Creates calculated fields like full_name
-      - Adds metadata timestamps
-      
-      **Source:** users_test seed
-      **Grain:** One row per user
+  - name: stg_gl_headers
+    description: "Staging model for GL transaction headers"
     columns:
-      - name: user_id
-        description: "Unique identifier for each user"
+      - name: gl_header_id
+        description: "Unique identifier for GL header"
         tests:
           - unique
           - not_null
-            
-      - name: email
-        description: "User's email address - primary contact method"
-            
-      - name: first_name
-        description: "User's first name"
-          
-      - name: last_name
-        description: "User's last name"
-          
-      - name: signup_date
-        description: "Date when the user signed up for the service"
-            
-      - name: country
-        description: "Country where the user is located"
-            
-      - name: age
-        description: "User's age in years"
-            
-      - name: subscription_type
-        description: "Type of subscription: free, basic, or premium"
-            
-      - name: full_name
-        description: "Calculated field: first_name + last_name"
-            
-      - name: dbt_updated_at
-        description: "Timestamp when this record was last processed by dbt"
+      - name: transaction_date
+        description: "Date when transaction occurred"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= '2020-01-01'"
+      - name: fiscal_year
+        description: "Fiscal year of transaction"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 2020
+              max_value: 2030
+      - name: fiscal_period
+        description: "Fiscal period (1-12)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1,2,3,4,5,6,7,8,9,10,11,12]
 
-  - name: stg_events_test
-    description: |
-      Staging model for user events from the test seed.
-      
-      This model performs basic cleaning and standardization of event data:
-      - Standardizes timestamp formats
-      - Converts to proper date types
-      - Adds metadata timestamps
-      
-      **Source:** events_test seed
-      **Grain:** One row per event
+  - name: stg_gl_lines
+    description: "Staging model for GL transaction lines"
     columns:
-      - name: event_id
-        description: "Unique identifier for each event"
+      - name: gl_line_id
+        description: "Unique identifier for GL line"
         tests:
           - unique
           - not_null
-            
-      - name: user_id
-        description: "Foreign key to users - who performed this event"
-            
-      - name: event_type
-        description: "Type of event performed by the user"
-            
-      - name: event_timestamp
-        description: "Exact timestamp when the event occurred"
-            
-      - name: page_url
-        description: "URL of the page where the event occurred"
-            
-      - name: device_type
-        description: "Type of device used: desktop, mobile, or tablet"
-            
-      - name: event_date
-        description: "Date portion of event_timestamp (derived field)"
-            
-      - name: dbt_updated_at
-        description: "Timestamp when this record was last processed by dbt"
+      - name: gl_header_id
+        description: "Foreign key to GL header"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_gl_headers')
+              field: gl_header_id
+      - name: account_code
+        description: "Chart of accounts code"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_account_hierarchy')
+              field: account_code
+      - name: net_amount
+        description: "Net amount (debit - credit)"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "!= 0"  # Should not be zero
+
+  - name: stg_account_hierarchy
+    description: "Staging model for account hierarchy"
+    columns:
+      - name: account_code
+        description: "Unique account code"
+        tests:
+          - unique
+          - not_null
+      - name: account_name
+        description: "Account name/description"
+        tests:
+          - not_null
+      - name: account_type
+        description: "Account type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE']

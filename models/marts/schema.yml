@@ -1,62 +1,50 @@
 version: 2
 
 models:
-  - name: user_engagement_summary_test
-    description: |
-      # User Engagement Summary
-      
-      Business-ready summary table combining user attributes with engagement metrics.
-      This table is optimized for business intelligence tools and executive reporting.
-      
-      ## Business Purpose
-      - **Primary Use:** Executive dashboards and user engagement analysis
-      - **Audience:** Product managers, marketing teams, executives
-      - **Update Frequency:** Daily (can be automated with dbt cloud)
-      
-      ## Key Metrics
-      - **total_events:** Historical total from user dimension
-      - **event_count:** Real-time count from fact table  
-      - **Engagement Level:** Derived business classification
-      
-      ## Business Logic
-      ```sql
-      event_count = COUNT(events from fact table)
-      total_events = SUM(events from user dimension) 
-      ```
-      
-      ## Data Quality
-      - All users must have valid emails
-      - Event counts are cross-validated between sources
-      - Ordered by engagement level for performance
-      
-      **Sources:**
-      - dim_users_test - User attributes and historical metrics
-      - fct_events_test - Real-time event data
-      
-      **Grain:** One row per user
-      **Refresh:** Can be scheduled for daily refresh
-      
+  - name: mart_balance_sheet
+    description: "Balance sheet aggregations by account and period"
+    tests:
+      - test_balance_sheet_balances  # Custom macro to test Assets = Liabilities + Equity
     columns:
-      - name: user_id
-        description: "Primary key - unique identifier for each user"
+      - name: account_code
+        description: "Account code from chart of accounts"
         tests:
-          - unique
           - not_null
-            
-      - name: full_name
-        description: "User's complete name"
-            
-      - name: email
-        description: "User's email address"
-            
-      - name: subscription_type
-        description: "Current subscription level"
-            
-      - name: total_events
-        description: "Total events from user dimension"
-            
-      - name: event_count
-        description: "Current count from fact table"
-            
-      - name: dbt_updated_at
-        description: "When this record was last updated"
+          - relationships:
+              to: ref('dim_accounts')
+              field: account_code
+      - name: account_type
+        description: "Account type - should only be balance sheet accounts"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ASSET', 'LIABILITY', 'EQUITY']
+      - name: period_end_balance
+        description: "Account balance at period end"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "!= 0"  # We filter out zero balances
+
+  - name: mart_income_statement
+    description: "P&L aggregations by account and period"
+    columns:
+      - name: account_code
+        description: "Account code from chart of accounts"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_accounts')
+              field: account_code
+      - name: account_type
+        description: "Account type - should only be P&L accounts"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['REVENUE', 'EXPENSE']
+      - name: period_amount
+        description: "Account activity for the period"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "!= 0"  # We filter out zero amounts
