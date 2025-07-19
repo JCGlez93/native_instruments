@@ -1,14 +1,14 @@
 # Native Instruments - dbt Data Pipeline
 
-Professional dbt project with BigQuery integration and CI/CD automation.
+Professional dbt project with BigQuery integration for data analytics.
 
 ## 🚀 Project Overview
 
 This project implements a complete **end-to-end data pipeline** using:
 - ✅ **dbt Core** with BigQuery
 - ✅ **Professional data architecture** (staging → core → marts)
-- ✅ **CI/CD with GitHub Actions**
 - ✅ **Comprehensive testing & documentation**
+- ✅ **Test data for development**
 
 ## 📊 Architecture
 
@@ -36,7 +36,7 @@ Production:      bqni-466316.dbt_staging.*
 ### Prerequisites
 - Python 3.11+
 - BigQuery project with credentials
-- GitHub account (for CI/CD)
+- Virtual environment with dbt-bigquery
 
 ### Quick Start
 
@@ -44,7 +44,7 @@ Production:      bqni-466316.dbt_staging.*
 ```bash
 git clone https://github.com/JCGlez93/native_instruments.git
 cd native_instruments
-source dbt_env/bin/activate
+source dbt_env/bin/activate  # Activate virtual environment
 ```
 
 2. **Load environment:**
@@ -60,15 +60,6 @@ dbt test      # Validate data
 dbt docs generate && dbt docs serve  # View docs
 ```
 
-## 🚀 CI/CD Pipeline
-
-Automated workflows with GitHub Actions:
-- **Pull Requests**: Automated testing
-- **Main branch**: Production deployment
-- **Multiple environments**: dev, CI, prod
-
-See `CI_CD_SETUP.md` for detailed configuration.
-
 ## 📁 Project Structure
 
 ```
@@ -78,8 +69,7 @@ See `CI_CD_SETUP.md` for detailed configuration.
 │   └── marts/       # Business-ready analytics
 ├── seeds/           # Test data (CSV files)
 ├── macros/          # Custom dbt macros  
-├── tests/           # Data quality tests
-└── .github/workflows/  # CI/CD automation
+└── tests/           # Data quality tests
 ```
 
 ## 🎯 Key Features
@@ -88,5 +78,32 @@ See `CI_CD_SETUP.md` for detailed configuration.
 - ✅ **Professional naming** conventions
 - ✅ **Comprehensive documentation** 
 - ✅ **Multi-environment** setup
-- ✅ **Automated deployments**
 - ✅ **Industry best practices**
+- ✅ **BigQuery optimized** models
+
+## 📝 Models
+
+### Seeds
+- `users_test.csv` - Test user data
+- `events_test.csv` - Test event data
+
+### Staging
+- `stg_users_test` - Cleaned user data
+- `stg_events_test` - Cleaned event data
+
+### Core
+- `dim_users_test` - User dimension table
+- `fct_events_test` - Event fact table
+
+### Marts
+- `user_engagement_summary_test` - User engagement analytics
+
+## 🔧 Configuration
+
+The project uses environment variables for BigQuery connection:
+- `BIGQUERY_PROJECT_ID`
+- `BIGQUERY_DATASET_DEV`
+- `BIGQUERY_DATASET_STAGING`
+- etc.
+
+Configure these in your `.env` file or load them using `load_env.sh`.
