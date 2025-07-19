@@ -26,4 +26,6 @@ keyfile.json
 
 # OS
 .DS_Store
-Thumbs.db 
+Thumbs.db dbt_env/
+
+dbt_env/
