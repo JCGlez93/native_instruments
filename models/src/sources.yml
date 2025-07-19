@@ -1,7 +1,18 @@
+# source of knowledge: https://docs.getdbt.com/blog/financial-modeling-accounting-principles
+#Original dbt Approach:
+# 1. Source Schema ✅ 
+# 2. Full General Ledger ✅ 
+# 3. Account Classifications ✅ 
+# 4. Date Spine + Period Aggregation ❌ Not implemented
+# 5. Retained Earnings ❌ Not implemented  
+# 6. Complete GL by Period ❌ Simplified
+# 7. Balance Sheet ✅ Simplified
+# 8. P&L Statement ✅ Simplified
+
 version: 2
 
 # Existing seeds sources  
-sources:
+sources: # just for end to end testing
   - name: seeds
     description: "Test data uploaded as seeds"
     
@@ -13,31 +24,27 @@ sources:
 
 # Raw finance sources for Task 1 migration
   - name: raw_finance
-    description: "Raw financial data from legacy systems for Task 1 migration testing"
+    description: "Raw financial data from legacy systems for Task 1 migration"
     database: "{{ env_var('DBT_BIGQUERY_PROJECT_ID') }}"
     schema: raw_finance
     
     tables:
-      - name: gl_headers
-        description: "General Ledger transaction headers with metadata"
+      - name: gl_headers # Simplified - only used fields
+        description: "General Ledger transaction headers"
+        # Purpose: Transaction metadata and timing information
+        # Key for: Period reporting, transaction grouping, fiscal calendar alignment
         columns:
           - name: gl_header_id
             description: "Unique identifier for GL header"
             tests:
               - unique
               - not_null
-          - name: transaction_number
-            description: "Human-readable transaction number"
           - name: transaction_type
             description: "Type of transaction (INVOICE, PAYMENT, SALES, etc.)"
-          - name: transaction_source
-            description: "Source system (AP, AR, GL)"
           - name: transaction_date
             description: "Date when transaction occurred"
             tests:
               - not_null
-          - name: posting_date
-            description: "Date when transaction was posted to GL"
           - name: fiscal_year
             description: "Fiscal year of transaction"
             tests:
@@ -46,15 +53,13 @@ sources:
             description: "Fiscal period (1-12)"
             tests:
               - not_null
-          - name: currency_code
-            description: "Transaction currency (USD, EUR, etc.)"
           - name: status
-            description: "Transaction status (POSTED, COMPLETE, etc.)"
-          - name: legal_entity_id
-            description: "Legal entity identifier"
+            description: "Transaction status (used in WHERE filter only)"
 
-      - name: gl_lines
-        description: "General Ledger transaction lines with account details"
+      - name: gl_lines # Simplified - only used fields
+        description: "General Ledger transaction lines"
+        # Purpose: Contains the actual debit/credit amounts for each account
+        # Key for: Balance calculations, account-level detail, transaction amounts
         columns:
           - name: gl_line_id
             description: "Unique identifier for GL line"
@@ -72,23 +77,21 @@ sources:
             description: "Chart of accounts code"
             tests:
               - not_null
-          - name: entered_dr
-            description: "Debit amount in transaction currency"
-          - name: entered_cr
-            description: "Credit amount in transaction currency"
           - name: accounted_dr
             description: "Debit amount in functional currency"
           - name: accounted_cr
             description: "Credit amount in functional currency"
-          - name: cost_center_code
-            description: "Cost center for dimensional reporting"
-          - name: department_code
-            description: "Department for dimensional reporting"
+          - name: entered_dr
+            description: "Debit amount (used in WHERE filter only)"
+          - name: entered_cr
+            description: "Credit amount (used in WHERE filter only)"
           - name: status
-            description: "Line status (POSTED, etc.)"
+            description: "Line status (used in WHERE filter only)"
 
-      - name: account_hierarchy
-        description: "Chart of accounts with hierarchy and financial statement mapping"
+      - name: account_hierarchy # Simplified - only used fields
+        description: "Chart of accounts with hierarchy"
+        # Purpose: Defines account structure, types, and financial statement mapping
+        # Key for: Account validation, categorization (Asset/Liability/etc), reporting hierarchy
         columns:
           - name: account_code
             description: "Unique account code"
@@ -97,26 +100,18 @@ sources:
               - not_null
           - name: account_name
             description: "Account name/description"
-          - name: parent_account_code
-            description: "Parent account for hierarchy"
           - name: account_type
             description: "Account type (ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)"
             tests:
               - not_null
               - accepted_values:
                   values: ['ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE']
-          - name: account_level
-            description: "Level in account hierarchy (1=top level)"
-          - name: normal_balance_side
-            description: "Normal balance side (DEBIT or CREDIT)"
-            tests:
-              - accepted_values:
-                  values: ['DEBIT', 'CREDIT']
-          - name: is_leaf_account
-            description: "Whether this is a detail account (TRUE) or summary (FALSE)"
-          - name: financial_statement_line
-            description: "Financial statement line item"
-          - name: financial_statement_category
-            description: "Financial statement category"
+          - name: parent_account_code
+            description: "Parent account for hierarchy"
 
- 
+#This hierarchy allows you to:
+#1. Validate account codes exist
+#2. Determine if it's an asset, liability, etc.
+#3. Roll up detail accounts to summary levels
+#4. Map to financial statement lines
+#5. Apply correct debit/credit logic
